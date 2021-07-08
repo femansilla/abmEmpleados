@@ -88,14 +88,15 @@
     }
 
     function validateCodigoEmpleado(code) {
-        if (edit) {
+        if (!edit) {
             $.post('@Url.Action("ValidateDuplicateCode", "Empleado")', { codigo: code }, (result) => {
                 if (result)
                     $('#codigoDuplicado').text('codigo duplicado')
                 else
                     $('#codigoDuplicado').text('')
             });
-        }
+        } else
+            $('#codigoDuplicado').text('')
     }
 
     function getData(code) {
@@ -195,6 +196,7 @@
                     tempCode = em.TipoDocumento.Codigo;
 
                     edit = true
+                    validateCodigoEmpleado(code)
                 }
             })
         })
