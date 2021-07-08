@@ -16,8 +16,10 @@ create table tiposDocumentos (
 	Estado varchar(1) default 'A' NOT NULL
 )
 
+insert into tiposDocumentos (Descripcion) values
+('DNI'), ('Pasaporte')
 
-alter procedure SP_SaveEmpleado
+create procedure SP_SaveEmpleado
 	@Codigo nvarchar(5), @Apellido nvarchar(50), @Nombre nvarchar(50), @FechaAlta nvarchar(50), @TipoDto int, @NumDto int
 as
 begin
