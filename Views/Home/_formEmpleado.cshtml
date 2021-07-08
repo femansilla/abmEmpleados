@@ -6,7 +6,7 @@
 {
     <div class="form-group">
         @Html.LabelFor(m => m.Codigo)
-        @Html.EditorFor(m => m.Codigo, new { htmlAttributes = new { @class = "form-control", pattern = "[0-9]+", placeholder = "Ingrese codigo", autocomplete = "off", min = "0", required = "required" } })
+        @Html.EditorFor(m => m.Codigo, new { htmlAttributes = new { @class = "form-control", pattern = "[0-9]+", placeholder = "Ingrese codigo", autocomplete = "off", minlength = "5", maxlength = "5", required = "required" } })
         <span id="codigoDuplicado" class="error"></span>
         @Html.ValidationMessageFor(m => m.Codigo)
     </div>
