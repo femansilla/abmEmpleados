@@ -2,42 +2,45 @@
 @model List<EmpleadoModel>
 
 
-@if(Model.Count > 0)
+@if (Model.Count > 0)
+{
+    <div style="margin: 1em 1em 1em 0">
+        <input class="form-control d-inline float-left col-md-7" autocomplete="off" type="text" placeholder="Ingrese apellido a buscar" onkeyup="BusquedaApellidos()" id="myInput">
+    </div>
+    <table id="table" class="table table-bordered table-hover table-striped table-responsive">
+        <thead>
+            <tr>
+                <th scope="col">Codigo</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Fecha de alta</th>
+                <th scope="col">Tipo de documento</th>
+                <th scope="col">Número Documento</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var em in Model)
             {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Codigo</th>
-                            <th scope="col">Apellido</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Fecha de alta</th>
-                            <th scope="col">Tipo de documento</th>
-                            <th scope="col">Número Documento</th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach(var em in Model)
-                {
-                    <tr>
-                        <td>@em.Codigo</td>
-                        <td>@em.Apellido</td>
-                        <td>@em.Nombre</td>
-                        <td>@em.FechaAlta.ToString("dd/MM/yyyy")</td>
-                        <td>@em.TipoDocumento.Descripcion</td>
-                        <td>@em.NumeroDocumento</td>
-                        <td>
-                            <div class="btn btn-sm btn-success btnEditar" value="@em.Codigo">Editar</div>
-                            <div class="btn btn-sm btn-danger btnEliminar" value="@em.Codigo">Eliminar</div>
-                        </td>
-                    </tr>
-                }
-                    </tbody>
-                </table>
+                <tr>
+                    <td>@em.Codigo</td>
+                    <td>@em.Apellido</td>
+                    <td>@em.Nombre</td>
+                    <td>@em.FechaAlta.ToString("dd/MM/yyyy")</td>
+                    <td>@em.TipoDocumento.Descripcion</td>
+                    <td>@em.NumeroDocumento</td>
+                    <td>
+                        <div class="btn btn-sm btn-success btnEditar" value="@em.Codigo">Editar</div>
+                        <div class="btn btn-sm btn-danger btnEliminar" value="@em.Codigo">Eliminar</div>
+                    </td>
+                </tr>
             }
+        </tbody>
+    </table>
+}
 
-            else
-            {
-                <br />
-                <span>No hay información disponible</span>
-            }
+else
+{
+    <br />
+    <span>No hay información disponible</span>
+}
