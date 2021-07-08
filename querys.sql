@@ -28,6 +28,7 @@ IF EXISTS (SELECT * FROM Empleados WHERE Codigo =@Codigo)
 BEGIN
    update Empleados set 
 	Apellido = @Apellido, Nombre = @Nombre,	FechaAlta = @FechaAlta, IdTipoDto = @TipoDto, NumDocumento = @NumDto
+	where Codigo = @Codigo
 END
 ELSE
 BEGIN
