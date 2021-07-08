@@ -88,12 +88,14 @@
     }
 
     function validateCodigoEmpleado(code) {
-        $.post('@Url.Action("ValidateDuplicateCode", "Empleado")', { codigo: code }, (result) => {
-            if (result)
-                $('#codigoDuplicado').text('codigo duplicado')
-            else
-                $('#codigoDuplicado').text('')
-        });
+        if (edit) {
+            $.post('@Url.Action("ValidateDuplicateCode", "Empleado")', { codigo: code }, (result) => {
+                if (result)
+                    $('#codigoDuplicado').text('codigo duplicado')
+                else
+                    $('#codigoDuplicado').text('')
+            });
+        }
     }
 
     $(() => {
