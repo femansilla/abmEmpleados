@@ -98,6 +98,18 @@
         }
     }
 
+    function getData(code) {
+        $.getJSON('@Url.Action("GetEmpleado", "Empleado")', { codigo: code }, (result) => {
+            if (result.status == "Ok") {
+                var em = result.value;
+                $('#deleteEmployee').append(`<div><strong>Codigo:</strong> ${em.Codigo}</div>`)
+                $('#deleteEmployee').append(`<div><strong>Apellido:</strong> ${em.Apellido}</div>`)
+                $('#deleteEmployee').append(`<div><strong>Nombre:</strong> ${em.Nombre}</div>`)
+                $('#deleteEmployee').append(`<div><strong>Fecha de alta:</strong> ${em.FechaAltaString}</div>`)
+            }
+        });
+    }
+
     $(() => {
         $('#exampleModal').on('shown.bs.modal', function (e) {
             $.getJSON('@Url.Action("GetAllTiposDocumentos", "Empleado")', (data) => {
@@ -145,7 +157,7 @@
 
         $('.btnEditar').click((e) => {
             var code = e.target.getAttribute('value')
-            $.post('@Url.Action("GetEmpleado", "Empleado")', { codigo: code }, (result) => {
+            $.getJSON('@Url.Action("GetEmpleado", "Empleado")', { codigo: code }, (result) => {
                 if (result.status == "Ok") {
                     $('#addEmployee').click();
 
@@ -164,15 +176,39 @@
         })
 
         $('.btnEliminar').click((e) => {
-            var code = e.target.getAttribute('value');
-            $.post('@Url.Action("Eliminar", "Empleado")', { codigo: code }, (result) => {
-                if (result)
-                    alert('Se elimino el empleado correctamente.');
-                else
-                    alert('Ocurrio un error al eliminar el empleado.');
 
-                location.href = '@Url.Action("Index", "Home")';
-            })
+            var code = e.target.getAttribute('value');
+
+            var dialog = bootbox.dialog({
+                title: 'Confirma la eliminacion del empleado?',
+                message: '<p id="deleteEmployee"></p>',
+                size: 'small',
+                buttons: {
+                    cancel: {
+                        label: "Cancelar",
+                        className: 'btn-info',
+                        callback: function () {
+                            console.log('Custom cancel clicked');
+                        }
+                    },
+                    ok: {
+                        label: "Eliminar",
+                        className: 'btn-danger',
+                        callback: function () {
+                            $.post('@Url.Action("Eliminar", "Empleado")', { codigo: code }, (result) => {
+                                if (result)
+                                    alert('Se elimino el empleado correctamente.');
+                                else
+                                    alert('Ocurrio un error al eliminar el empleado.');
+
+                                location.href = '@Url.Action("Index", "Home")';
+                            });
+                        }
+                    }
+                }
+            });
+
+            getData(code);
         })
     });
 
