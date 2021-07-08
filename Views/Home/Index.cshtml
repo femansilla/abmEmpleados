@@ -1,0 +1,177 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container">
+    <h1>Lista de Empleados</h1>
+
+    <!-- Button trigger modal -->
+    <div id="addEmployee" class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Nuevo</div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Cargar empleado</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @{
+                        Html.RenderPartial("_formEmpleado");
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button id="saveEmployee" type="button" class="btn btn-primary">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @{
+        Html.RenderAction("ListaEmpleados", "Home");
+    }
+    
+</div>
+
+
+<script>
+
+    let edit = false;
+    let tempCode;
+    var buildSelectize = (selector, data) => {
+        $('#' + selector).selectize({
+            plugins: ['remove_button'],
+            valueField: 'code',
+            labelField: 'description',
+            options: data,
+            sortField: "description",
+            searchField: 'description',
+            delimiter: '|',
+            selectOnTab: true,
+            openOnFocus: true,
+            closeAfterSelect: true,
+            maxItems: 1,
+            placeholder: 'Seleccione...',
+            render: {
+                item: function (item) {
+                    return '<div id="' + item.code + '" data-value="' + item.code + '" class="item">' + item.description + '</div>';
+                },
+                option: function (item) {
+                    return '<div id="' + item.code + '" data-value="' + item.code + '" data-selectable="" class="option">' + item.description + '</div>';
+                }
+            },
+            load: function (query, callback) {
+                var currOpt = this.options;
+                var filterOpt = [];
+                for (var i in currOpt)
+                    if (currOpt[i].description.toLowerCase().indexOf(query.toLowerCase()) > -1)
+                        filterOpt.push({ code: currOpt[i].code, Text: currOpt[i].description });
+
+                callback(filterOpt.sort());
+            },
+            onChange: function (value) {
+                if (!value) {
+                    $('#NumeroDocumento').val('');
+                }
+            },
+            onItemAdd: (value) => {
+                this.blur();
+            },
+            onDropdownClose: (dropdown) => {
+                $(dropdown).prev().find('input').blur();
+            }
+        });
+    }
+
+    function validateCodigoEmpleado(code) {
+        $.post('@Url.Action("ValidateDuplicateCode", "Empleado")', { codigo: code }, (result) => {
+            if (result)
+                $('#codigoDuplicado').text('codigo duplicado')
+            else
+                $('#codigoDuplicado').text('')
+        });
+    }
+
+    $(() => {
+        $('#exampleModal').on('shown.bs.modal', function (e) {
+            $.getJSON('@Url.Action("GetAllTiposDocumentos", "Empleado")', (data) => {
+                buildSelectize('tipoDocumento', data);
+            }).then(() => {
+                var $select = $("#tipoDocumento").selectize();
+                var selectize = $select[0].selectize;
+                if (tempCode) {
+                    selectize.setValue(tempCode);
+                } else {
+                    selectize.setValue('');
+                }
+            });
+
+
+            $('#Codigo').focusout((e) => {
+                validateCodigoEmpleado(e.target.value)
+            })
+
+        });
+
+        $('#exampleModal').on('hidden.bs.modal', function (e) {
+            $('form#mainForm input').val('');
+            $('#Codigo').removeAttr('readonly');
+            tempCode = undefined;
+        });
+
+        $('#saveEmployee').click(() => {
+
+            if ($('form#mainForm').valid()) {
+                $('form#mainForm').serialize();
+
+                $.post('@Url.Action("Edit", "Empleado")', $('form#mainForm').serialize(), (result) => {
+                    if (result && edit)
+                        alert('Se actualizo el empleado correctamente.');
+                    else if (result)
+                        alert('Se agrego el empleado correctamente.');
+                    else
+                        alert('Ocurrio un error al agregar el empleado.');
+
+                    location.href = '@Url.Action("Index", "Home")';
+                })
+            }
+        })
+
+        $('.btnEditar').click((e) => {
+            var code = e.target.getAttribute('value')
+            $.post('@Url.Action("GetEmpleado", "Empleado")', { codigo: code }, (result) => {
+                if (result.status == "Ok") {
+                    $('#addEmployee').click();
+
+                    var em = result.value;
+                    $('#Codigo').val(em.Codigo).attr('readonly', 'readonly');
+                    $('#Apellido').val(em.Apellido);
+                    $('#Nombre').val(em.Nombre);
+                    $('#NumeroDocumento').val(em.NumeroDocumento);
+                    $('#FechaAlta').val(em.FechaAltaString);
+
+                    tempCode = em.TipoDocumento.Codigo;
+
+                    edit = true
+                }
+            })
+        })
+
+        $('.btnEliminar').click((e) => {
+            var code = e.target.getAttribute('value');
+            $.post('@Url.Action("Eliminar", "Empleado")', { codigo: code }, (result) => {
+                if (result)
+                    alert('Se elimino el empleado correctamente.');
+                else
+                    alert('Ocurrio un error al eliminar el empleado.');
+
+                location.href = '@Url.Action("Index", "Home")';
+            })
+        })
+    });
+
+</script>

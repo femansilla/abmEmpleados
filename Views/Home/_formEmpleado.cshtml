@@ -1,0 +1,43 @@
+﻿@using abmEmpleados.Models
+@model EmpleadoModel
+
+
+@using (Html.BeginForm("Agregar", "Empleado", FormMethod.Post, new { role = "form", @class = "form-vertical", id = "mainForm", autocomplete = "off" }))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.Codigo)
+        @Html.EditorFor(m => m.Codigo, new { htmlAttributes = new { @class = "form-control", pattern = "[0-9]+", placeholder = "Ingrese codigo", autocomplete = "off", min = "0", required = "required" } })
+        <span id="codigoDuplicado" class="error"></span>
+        @Html.ValidationMessageFor(m => m.Codigo)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Apellido)
+        @Html.EditorFor(m => m.Apellido, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese apellido", autocomplete = "off", required = "required" } })
+        @Html.ValidationMessageFor(m => m.Apellido)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Nombre)
+        @Html.EditorFor(m => m.Nombre, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese nombre", autocomplete = "off", required = "required" } })
+        @Html.ValidationMessageFor(m => m.Nombre)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.FechaAlta)
+        @Html.EditorFor(m => m.FechaAlta, new { htmlAttributes = new { type = "date", @class = "", placeholder = "Seleccione...", autocomplete = "off", required = "required" } })
+        @Html.ValidationMessageFor(m => m.FechaAlta)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.TipoDocumento)
+        @Html.EditorFor(m => m.TipoDocumento.Codigo, new { htmlAttributes = new { id = "tipoDocumento", type = "text", @class = "", placeholder = "Seleccione..", autocomplete = "off", required = "required" } })
+        @Html.ValidationMessageFor(m => m.TipoDocumento)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.NumeroDocumento)
+        @Html.EditorFor(m => m.NumeroDocumento, new { htmlAttributes = new { @class = "form-control", placeholder = "Ingrese número de documento", autocomplete = "off", required = "required" } })
+        @Html.ValidationMessageFor(m => m.NumeroDocumento)
+    </div>
+}
