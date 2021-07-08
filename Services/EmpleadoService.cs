@@ -11,7 +11,13 @@ namespace abmEmpleados.Services
 
         public static List<empleados> GetAllEmpleados()
         {
-            return _context.empleados.Where(x => x.Estado == "A").ToList();
+            List<empleados> result = new List<empleados>();
+            using (var _context = new EpleadosEntities())
+            {
+                result = _context.empleados.Where(x => x.Estado == "A").ToList();
+            }
+            return result;
+
         }
 
         public static List<tiposDocumentos> GetAllTiposDocumento()
@@ -25,8 +31,6 @@ namespace abmEmpleados.Services
             {
                 string date = value.FechaAlta.Value.ToString("dd-MM-yyyy");
                 _context.SP_SaveEmpleado(value.Codigo, value.Apellido, value.Nombre, date, value.IdTipoDto, value.NumDocumento);
-                //_context.empleados.Add(value);
-                //_context.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -38,7 +42,12 @@ namespace abmEmpleados.Services
         {
             try
             {
-                return _context.empleados.FirstOrDefault(x => x.Codigo == codigo) != null;
+                bool result = false;
+                using (var _context = new EpleadosEntities())
+                {
+                    result = _context.empleados.FirstOrDefault(x => x.Codigo == codigo && x.Estado == "A") != null;
+                }
+                return result;
             }
             catch (Exception ex)
             {
