@@ -164,7 +164,7 @@
 
         $('#saveEmployee').click(() => {
 
-            if ($('form#mainForm').valid()) {
+            if ($('form#mainForm').valid() && !$('#codigoDuplicado').text()) {
                 $('form#mainForm').serialize();
 
                 $.post('@Url.Action("Edit", "Empleado")', $('form#mainForm').serialize(), (result) => {
@@ -178,6 +178,8 @@
                     location.href = '@Url.Action("Index", "Home")';
                 })
             }
+            else
+                return false
         })
 
         $('.btnEditar').click((e) => {
